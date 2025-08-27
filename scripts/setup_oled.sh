@@ -22,6 +22,7 @@ sudo -u "${RUN_USER}" python3 -m venv "${VENV_DIR}"
 sudo -u "${RUN_USER}" bash -lc "
   source '${VENV_ACTIVATE}' && \
   pip install --upgrade pip wheel setuptools && \
+  cd '${REPO_DIR}'
   pip install .
 "
 
