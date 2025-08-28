@@ -25,9 +25,10 @@ sudo -u "${RUN_USER}" python3 -m venv "${VENV_DIR}"
 sudo -u "${RUN_USER}" bash -lc "
   cd '${REPO_DIR}' && \
   source '${VENV_ACTIVATE}' && \
-  pip install --upgrade pip wheel setuptools && \
+  python -m pip install --upgrade pip wheel setuptools && \
   pip install .
 "
+
 
 echo "[3/4] Systemd one-shot boot service..."
 DISPATCHER_SCRIPT="/etc/NetworkManager/dispatcher.d/99-hambot-oled"

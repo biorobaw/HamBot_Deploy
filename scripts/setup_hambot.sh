@@ -27,7 +27,9 @@ echo "==> Activating venv and installing HamBot (robot_systems)..."
 # shellcheck disable=SC1090
 source "$VENV_DIR/bin/activate"
 python -m pip install --upgrade pip setuptools wheel
+cd "$HAMBOT_DIR"
 pip install .
+cd - >/dev/null
 
 # 3) Global auto-activation for interactive bash sessions
 BASHRC="$HOME/.bashrc"
