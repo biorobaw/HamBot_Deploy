@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Usage:
-#   ./scripts/uninstall.sh [hambot|oled|both] [install_parent_dir]
+#   ./scripts/uninstall.sh [hambot|oled|depthai|both|all] [install_parent_dir]
 # Defaults: target=both, install_parent_dir=$HOME
 TARGET="${1:-both}"
 INSTALL_PARENT_DIR="${2:-$HOME}"
@@ -16,6 +16,10 @@ VENV_DIR="$HAMBOT_DIR/hambot_venv"
 BASHRC="$HOME/.bashrc"
 SNIPPET_TAG="# >>> HamBot global auto-activate >>>"
 SNIPPET_END="# <<< HamBot global auto-activate <<<"
+
+DEPTHAI_DIR="$INSTALL_PARENT_DIR/depthai-python"
+VENV_DIR="$HAMBOT_DIR/hambot_venv"
+UDEV_RULE="/etc/udev/rules.d/80-movidius.rules"
 
 OLED_RUN_USER="hambot"
 OLED_HOME="$(eval echo ~${OLED_RUN_USER} 2>/dev/null || echo "$HOME")"
@@ -70,6 +74,29 @@ remove_oled() {
   fi
 }
 
+remove_depthai() {
+  # Remove udev rule
+  if [ -f "$UDEV_RULE" ]; then
+    echo "==> Removing udev rule: $UDEV_RULE"
+    sudo rm -f "$UDEV_RULE"
+    sudo udevadm control --reload-rules && sudo udevadm trigger
+  fi
+
+  # Remove depthai-python clone
+  if [ -d "$DEPTHAI_DIR" ]; then
+    echo "==> Removing depthai-python directory: $DEPTHAI_DIR"
+    rm -rf "$DEPTHAI_DIR"
+  fi
+
+  # Uninstall pip packages from the venv if it exists
+  if [ -f "$VENV_DIR/bin/activate" ]; then
+    echo "==> Uninstalling depthai pip packages from $VENV_DIR..."
+    # shellcheck disable=SC1090
+    source "$VENV_DIR/bin/activate"
+    pip uninstall -y depthai simplejpeg || true
+  fi
+}
+
 case "$TARGET" in
   hambot)
     remove_hambot
@@ -77,12 +104,20 @@ case "$TARGET" in
   oled)
     remove_oled
     ;;
+  depthai)
+    remove_depthai
+    ;;
   both)
     remove_hambot
     remove_oled
     ;;
+  all)
+    remove_depthai
+    remove_hambot
+    remove_oled
+    ;;
   *)
-    echo "Usage: $0 [hambot|oled|both] [install_parent_dir]"
+    echo "Usage: $0 [hambot|oled|depthai|both|all] [install_parent_dir]"
     exit 1
     ;;
 esac
