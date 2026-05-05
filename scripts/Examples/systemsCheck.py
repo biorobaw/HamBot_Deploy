@@ -15,7 +15,7 @@ robot = HamBot(
 )
 
 if robot.camera is not None:
-    robot.camera.set_target_colors((4, 113, 184), tolerance=0.25)
+    robot.camera.set_target_colors((0, 83, 155), tolerance=0.10)
 
 
 def press(key):
