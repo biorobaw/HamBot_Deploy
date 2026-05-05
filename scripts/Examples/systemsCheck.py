@@ -4,11 +4,11 @@ from robot_systems.robot import HamBot
 from robot_systems.camera import Camera
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--drivetrain', choices=['4wd', '2wd'], default='2wd')
+parser.add_argument('--drivetrain', choices=['2WD', '4WD'], default='2WD')
 args = parser.parse_args()
 
 robot = HamBot(
-    drivetrain=args.drivetrain.upper(),
+    drivetrain=args.drivetrain,
     lidar_enabled=True,
     camera_enabled=True,
     camera_type=Camera.CAM_PICAM
